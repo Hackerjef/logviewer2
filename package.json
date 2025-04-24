@@ -10,7 +10,7 @@
     "animate.css": "^4.1.1",
     "core-js": "^3.19.0",
     "highlight": "^0.2.4",
-    "jquery": "3.3.1",
+    "jquery": "3.7.0",
     "materialize-css": "^1.0.0"
   }
 }

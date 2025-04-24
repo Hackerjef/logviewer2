@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from types import FrameType
+
 import logging
 import os
 import signal
@@ -29,7 +33,7 @@ app.logger.handlers = gunicorn_logger.handlers
 app.logger.setLevel(gunicorn_logger.level)
 
 
-def keyboardInterruptHandler(s, frame):
+def keyboard_interrupt_handler(_s: int, _frame: FrameType | None) -> None:
     if not app.config['ISSHUTDOWN']:
         app.config['ISSHUTDOWN'] = True
         if app.config.get("FDIR", False):
@@ -46,7 +50,7 @@ def keyboardInterruptHandler(s, frame):
             print("kill hit {}/10 times - killing".format(app.config['SHUTDOWNC']))
 
 
-signal.signal(signal.SIGINT, keyboardInterruptHandler)
+signal.signal(signal.SIGINT, keyboard_interrupt_handler)
 
 app.db = DB()
 # Auth :)
@@ -60,24 +64,30 @@ app.register_blueprint(Fproxy)
 # errors
 @app.errorhandler(403)
 @with_user
-def page_not_found(e):
+def page_not_found(_e):
     return render_template("unauthorized.html", user=g.user), 403
 
 
 @app.errorhandler(404)
 @with_user
-def page_not_found(e):
+def page_not_found(_e):
     return render_template("not_found.html", user=g.user), 404
+
+
+@app.errorhandler(405)
+@with_user
+def page_not_found_method(_e):
+    return render_template("not_found.html", user=g.user), 405
 
 
 @app.errorhandler(500)
 @with_user
-def page_not_found(e):
+def page_not_found(_e):
     return render_template("server_error.html", user=g.user), 500
 
 
 # Pages
-@app.route("/")
+@app.get("/")
 @with_user
 def root():
     return render_template('index.html', user=g.user)
@@ -90,21 +100,21 @@ def robotstxt():
     return r
 
 
-@app.route("/<string:qid>/<logkey>")
+@app.get("/<string:qid>/<logkey>")
 @with_user
 @with_logs
 def logviewer_render(qid, logkey):
     return g.document.render_html(user=g.user)
 
 
-@app.route("/evidence/<string:qid>/<logkey>")
+@app.get("/evidence/<string:qid>/<logkey>")
 @with_user
 @with_logs_evidence
 def logviewer_render_evidence(qid, logkey):
-    return g.document.render_html(user=g.user)
+    return g.document.render_html(evidence=True, user=g.user)
 
 
-@app.route("/api/raw/<string:qid>/<logkey>")
+@app.get("/api/raw/<string:qid>/<logkey>")
 @with_logs
 def api_raw_render(qid, logkey):
     return Response(g.document.render_plain_text(), mimetype="text/plain"), 200

@@ -25,7 +25,7 @@ def rfproxy():
 
             # Check if path is a file and serve
             if os.path.isfile(abs_path):
-                return send_file(abs_path)
+                return send_file(str(abs_path))
         except:
             return abort(404)
     else:

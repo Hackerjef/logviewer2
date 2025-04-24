@@ -4,14 +4,14 @@
 <html lang="en">
 
 <head>
-    <title>Log Entry</title>
+    <title>{% if evidence %}Evidence Share{% else %}Log Entry{% endif %} - {{ log_entry.key }}</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width"/>
 
     <meta content="{{ log_entry.thread_messages | length }} messages {% if log_entry.open %}(Open){% else %}(Closed){% endif %}" property="og:site_name">
     <meta content="Recipient: {{ log_entry.recipient | string | e }}" property="og:title">
     <meta content='{{ log_entry.recipient.avatar_url }}' property='og:image'>
-    <meta content='Created {{ log_entry.human_created_at }}' property='og:image'>
+    <meta content='Created {{ log_entry.human_created_at }}' property='og:image:alt'>
 
     <link href="/static/css/logstyle.css" rel="stylesheet">
     <link href="/static/css/solarized-dark.css" rel="stylesheet">
@@ -43,20 +43,19 @@
         <div class="info__guild-icon-container">
             <img class="info__guild-icon hoverable"
                  src="{{ log_entry.recipient.avatar_url }}"
-                 onerror="this.src='{{ log_entry.recipient.default_avatar_url }}'"
                  alt="avatar">
         </div>
         <div class="info__metadata">
             <div class="info__guild-name"><span style='color:white'>Thread Logs</span> {% if log_entry.open %}
                 (Open){% else %}(Closed){% endif %}</div>
             <div title="{{ log_entry.recipient.id }}" class="info__channel-topic tooltip"><span style="color:white">Recipient:
-                <b>{{ log_entry.recipient.name | e }}</b></span>#{{ log_entry.recipient.discriminator }}
+                <b>{{ log_entry.recipient | e }}</b></span>
                 <span class='tooltiptext pre pre--inline'>{{ log_entry.recipient.id }}</span>
             </div>
             {% if log_entry.recipient != log_entry.creator %}
             <br>
                 <div class="info__channel-topic tooltip"><span style="color:white">Creator:
-                    <b>{{ log_entry.creator.name | e }}</span></b>#{{ log_entry.creator.discriminator }}
+                    <b>{{ log_entry.creator | e }}</b></span>
                     <span class='tooltiptext pre pre--inline'>{{ log_entry.creator.id }}</span>
                 </div>
             {% endif %}
@@ -83,12 +82,11 @@
                 <div class="chatlog__author-avatar-container">
                         <img class="chatlog__author-avatar"
                              src="{{ group.author.avatar_url }}"
-                             onerror="this.src='{{ group.author.default_avatar_url }}'"
                              alt="avatar"/>
                 </div>
 
                 <div class="chatlog__messages">
-                    <span class="chatlog__author-name" title="{{ group.author | string | e }}">{{ group.author.name | e }}</span>
+                    <span class="chatlog__author-name" title="{{ group.author | string | e }}">{{ group.author | e }}</span>
                     {% if group.type == 'thread_message' %}
                     {% if group.author.mod %}
                         <span class="mod-tag">Reply</span>
@@ -134,7 +132,7 @@
                 </div>
                 <div class="chatlog__messages">
                     <span class="chatlog__author-name"
-                          title="{{ log_entry.closer | string | e }}">{{ log_entry.closer.name | e }}</span>
+                          title="{{ log_entry.closer | string | e }}">{{ log_entry.closer | e }}</span>
                     {% if log_entry.closer.mod %}
                         <span>closed the thread</span>
                         <span class="system-tag">System</span>
@@ -159,7 +157,7 @@
                     if (!elem.classList.contains('perma_hover')) {
                         should_add = true
                     }
-                    removePermaHover()
+                    removePermaHover(elem)
                     if (should_add) {
                         history.pushState(null, null, '#' + child.id);
                         elem.classList.add('perma_hover')
@@ -173,7 +171,7 @@
 
             let message_id = document.location.hash.split('#')[1]
             if (message_id) {
-                msg = document.getElementById(message_id)
+                let msg = document.getElementById(message_id)
                 if (msg) {
                     let group = msg.parentElement.parentElement
                     group.classList.add('perma_hover')
