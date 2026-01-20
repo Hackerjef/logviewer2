@@ -1,4 +1,4 @@
-FROM python:3.12.7-slim-bookworm as py
+FROM python:3.13.11-slim-bookworm as py
 ENV PYTHONFAULTHANDLER=1 \
   PYTHONUNBUFFERED=1 \
   PYTHONHASHSEED=random \
@@ -13,6 +13,11 @@ RUN curl -sSL install.python-poetry.org | POETRY_HOME=/opt/poetry python -
 ENV PATH /opt/poetry/bin:$PATH
 
 FROM py
+
+LABEL org.opencontainers.image.source=https://github.com/hackerjef/logviewer2
+LABEL org.opencontainers.image.description="logviewer2: A web-based log viewer"
+LABEL org.opencontainers.image.licenses=unlicense
+
 WORKDIR /logviewer2
 ENV ENV docker
 COPY . .
