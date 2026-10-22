@@ -20,12 +20,6 @@ flask-discord = {git = "https://github.com/weibeu/Flask-Discord.git", rev = "v9"
 gunicorn = "23.0.0"
 psycogreen = "^1.0.2"
 
-[tool.poetry.scripts]
-web = 'scripts:web'
-webd = 'scripts:webd'
-secret = 'scripts:secret'
-gensecret = 'scripts:gensecret'
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

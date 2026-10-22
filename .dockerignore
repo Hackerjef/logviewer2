@@ -2,3 +2,4 @@ static/modules
 .env
 docker-compose.override.yml
 docker-compose.yml
+__pycache__
