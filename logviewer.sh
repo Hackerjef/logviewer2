@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python -m gunicorn logviewer2.web:app --preload --workers 3 --access-logfile -
+poetry run python -m gunicorn logviewer2.web:app --preload --workers 3 --access-logfile -
