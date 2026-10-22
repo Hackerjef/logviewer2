@@ -6,6 +6,7 @@ import logging
 import os
 import signal
 
+import dotenv
 from flask import Flask, render_template, Response, g
 from flask_discord import DiscordOAuth2Session
 
@@ -17,6 +18,7 @@ from logviewer2.utils.db import DB
 from logviewer2.utils.regexcfg import GET_DCONFIG
 from logviewer2.views import Auth, Fproxy
 
+dotenv.load_dotenv()
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.config.from_object(__name__)
